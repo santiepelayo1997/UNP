@@ -17,7 +17,7 @@
                         <li>
                         <a href="adminFees.php">
                             <i class="material-icons">description</i>
-                            <span>Manage Fees</span>
+                            <span>Manage Files</span>
                         </a>
                     </li>
                 </ul>

@@ -1,5 +1,30 @@
 <?php
   include "../header.php";
+session_start();
+error_reporting(0);
+include('../config.php');
+
+if(strlen($_SESSION['adminSession'])==0)
+    {   
+        header('location:index.php');
+    }
+    else
+    {
+
+     if(isset($_GET['empid']))
+        {
+                $id=$_GET['empid'];
+                $status=0;
+                $sql = "DELETE FROM tbl_accounts WHERE id=:id";
+                $query = $dbh->prepare($sql);
+                $query -> bindParam(':id',$id, PDO::PARAM_STR);
+                $query -> execute();
+                header('location:index.php');
+        }
+
+
+
+     }
 ?>
 <style type="text/css">
   #banner {

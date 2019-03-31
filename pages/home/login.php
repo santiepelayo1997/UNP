@@ -8,7 +8,7 @@ if(isset($_POST['signin']))
 {
     $uname=$_POST['username'];
     $password=$_POST['password'];
-    $sql ="SELECT username,password,id,status FROM tbl_adminAccount WHERE username=:uname and password=:password";
+    $sql ="SELECT username,password,status,id,account_type FROM tbl_accounts WHERE username=:uname and password=:password";
     $query= $dbh -> prepare($sql);
     $query-> bindParam(':uname', $uname, PDO::PARAM_STR);
     $query-> bindParam(':password', $password, PDO::PARAM_STR);
@@ -20,7 +20,8 @@ if(isset($_POST['signin']))
          foreach ($results as $result)
           {
             $status=$result->status;
-            $_SESSION['adminSession']=$result->id;
+            $accounttype=$result->account_type;
+            $_SESSION['accountSession']=$result->id;
           }
               if($status==0)
               {
@@ -28,8 +29,21 @@ if(isset($_POST['signin']))
               }
               else
               {
-                     $_SESSION['adminSession']=$_POST['username'];
-                     echo "<script type='text/javascript'> document.location = 'index.php'; </script>";
+                     $_SESSION['accountSession']=$_POST['username'];
+                    if($accounttype == "Secretary")
+                    {
+                            echo "<script type='text/javascript'> document.location = '../secretary/index.php'; </script>";
+                    }
+                    else if($accounttype == "Treasurer")
+                    {
+                              echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                    }
+                    else if($accounttype == "Adviser")
+                    {
+                              echo "<script type='text/javascript'> document.location = '../adviser/index.php'; </script>";
+                    }
+                    
+        
               } 
         }
 
@@ -47,9 +61,9 @@ if(isset($_POST['signin']))
         <form method="POST">
         <div class="card">
               <div class="header bg-blue">
-               <center> <img style="width:100px; height:100px;" src="../../images/logo.png" alt="logo"><br>
-                <h4>Admin</h4>
-              <h2>Login your account.</h2></center>
+               <center> <img style="width:100px; height:100px;" src="../../images/logo.png" alt="logo">
+                <br><br><center><b><p>Welcome to University of Northern Phillipines</p></b></center><br> 
+                <h2>Login your account.</h2></center>
               </div>
             <div class="body">
               <br>

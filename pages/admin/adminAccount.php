@@ -29,22 +29,7 @@ if(strlen($_SESSION['adminSession'])==0)
 
 ?>
 <body class="theme-blue">
-    <!-- Page Loader -->
-    <div class="page-loader-wrapper">
-        <div class="loader">
-            <div class="preloader">
-                <div class="spinner-layer pl-red">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-            </div>
-            <p>Please wait...</p>
-        </div>
-    </div>
+
     <!-- #END# Page Loader -->
     <!-- Overlay For Sidebars -->
     <div class="overlay"></div>
@@ -113,7 +98,7 @@ if(strlen($_SESSION['adminSession'])==0)
     <section class="content">
         <div class="container-fluid">
                      <!-- Basic Examples -->
-                      <form method="POST"> 
+        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="myFormId"> 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
@@ -127,23 +112,27 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <input type="hidden" name="varDocId" id="varDocId">
                             <button type="button" class="btn btn-info waves-effect" style="border-radius:20px;" data-toggle="modal" data-target="#defaultModal">Add New Account</button>&nbsp;&nbsp;
                             <br><br>
+                            <div class="refreshPage">
+
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped table-hover js-basic-example dataTable" id="tblAccounts">
                                     <thead>
                                         <tr>
-                                            <th>*</th>
                                              <th>ID</th>
+                                              <th>College Name</th>
                                             <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Password</th>
                                             <th>Account Type</th>
+                                             <th>Organizational Type</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
+
                                             $sql = "SELECT * from tbl_accounts ";
                                             $query = $dbh -> prepare($sql);
                                             $query->execute();
@@ -154,22 +143,27 @@ if(strlen($_SESSION['adminSession'])==0)
                                             foreach($results as $result)
                                             {               ?>  
                                         <tr>
-                                            <td> <?php echo htmlentities($cnt);?></td>
                                             <td> <?php echo htmlentities($result->id);?></td>
+                                              <td> <?php echo htmlentities($result->collegename);?></td>
                                             <td><?php echo htmlentities($result->firstname);?></td>
                                             <td><?php echo htmlentities($result->lastname);?></td>
                                             <td><?php echo htmlentities($result->username);?></td>
                                            <td><?php echo htmlentities($result->password);?></td>
                                             <td><?php echo htmlentities($result->account_type);?></td>
+                                              <td><?php echo htmlentities($result->orgtype);?></td>
                                             <td><?php echo htmlentities($result->created_date);?></td>
                                              <td>
-                                                <a class="btn btn-danger waves-effect"   style="border-radius:10px;" href="adminAccount.php?empid=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to delete this user?');"><i class="material-icons">delete</i></a>&nbsp;&nbsp;<button class="updateBtn btn btn-info waves-effect" type="button" data-toggle="modal" data-target="#updateModal" style="border-radius:10px;"><i class="material-icons">update</i></button></td>
+                                                <a class="btn btn-danger waves-effect"   style="border-radius:10px;" href="adminAccount.php?empid=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to delete this user?');"><i class="material-icons">delete</i></a>&nbsp;&nbsp;<br><button class="updateBtn btn btn-info waves-effect" type="button" data-toggle="modal" data-target="#updateModal" style="border-radius:10px;"><i class="material-icons">update</i></button></td>
           
                                         </tr>   
-                                         <?php $cnt++;} }?>
+                                         <?php $cnt++;
+                                               } 
+                                             }
+                                         ?>
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -185,6 +179,14 @@ if(strlen($_SESSION['adminSession'])==0)
                         </div>
                         <div class="modal-body">
                              <div class="row clearfix">
+                               <div class="col-sm-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="collegeName" id="collegeName"/>
+                                            <label class="form-label">College Name</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
@@ -193,6 +195,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                         </div>
                                     </div>
                                 </div>
+                          
                                 <div class="col-sm-6">
                                       <div class="form-group form-float">
                                         <div class="form-line">
@@ -222,21 +225,27 @@ if(strlen($_SESSION['adminSession'])==0)
                             </div>
                                <div class="row clearfix">
                                   <div class="col-sm-6">
+                                     <label>Organizational Type</label>
+                                    <select class="form-control show-tick" name="orgType"  id="orgType" >
+                                           <option value="Mandated" >Mandated</option>
+                                        <option value="Accredited">Accredited</option>
+                                    </select>
+                                </div>
+                               <div class="col-sm-6">
                                      <label>Account Type</label>
                                     <select class="form-control show-tick" name="accountType"  id="accountType" >
-                                          <option value="ADVISER">ADVISER</option>
-                                        <option value="OFFICER">OFFICER</option>
-                                        <option value="ADMIN">ADMIN</option>
+                                                <option value="Treasurer">Treasurer</option>
+                                                <option value="Secretary">Secretary</option>
+                                                <option value="Adviser">Adviser</option>
                                     </select>
-
                                 </div>
                            
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="button" class="btn btn-link waves-effect" id="btnAdd" name="btnAdd" value="SAVE">
+                            <input type="submit" class="btn btn-link waves-effect" id="btnAdd" name="btnAdd" value="SAVE">
                             <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
-                        </div>
+                        </div>  
                     </div>
       
                 </div>
@@ -244,13 +253,22 @@ if(strlen($_SESSION['adminSession'])==0)
                  <!-- Update Modal  -->
             <div class="modal fade" id="updateModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                     <form method="POST"> 
+                     <form method="POST"  action="<?php echo $_SERVER['PHP_SELF']; ?>" action="adminAccount.php"> 
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="defaultModalLabel">Update Account</h4>
                         </div>
                         <div class="modal-body">
                              <div class="row clearfix">
+                                      <div class="col-sm-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                              <label >College Name</label>
+                                            <input type="text" class="form-control" name="UcollegeName" id="UcollegeName"/>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
@@ -263,7 +281,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <div class="col-sm-6">
                                       <div class="form-group form-float">
                                         <div class="form-line">
-                                                         <label >Last Name</label>
+                                         <label >Last Name</label>
                                             <input type="text" class="form-control" name="uLastName" id="uLastName"/>
                                
                                         </div>
@@ -291,19 +309,25 @@ if(strlen($_SESSION['adminSession'])==0)
                                 </div>
                             </div>
                                <div class="row clearfix">
-                                  <div class="col-sm-6">
-                                     <label>Account Type</label>
-                                    <select class="form-control show-tick" name="uAccountType" id="uAccountType">
-                                        <option value="ADMIN">ADMIN</option>
-                                        <option value="ADVISER">ADVISER</option>
-                                        <option value="1">OFFICER</option>
+                               <div class="col-sm-6">
+                                     <label>Organizational Type</label>
+                                    <select class="form-control show-tick" name="uorgType" id="uorgType">
+                                        <option value="Mandated" selected>Mandated</option>
+                                        <option value="Accredited">Accredited</option>
                                     </select>
                                 </div>
-                           
+                                    <div class="col-sm-6">
+                                     <label>Account Type</label>
+                                    <select class="form-control show-tick" name="uAccountType"  id="uAccountType" >
+                                                <option value="Treasurer" selected="">Treasurer</option>
+                                                <option value="Secretary">Secretary</option>
+                                                <option value="Adviser">Adviser</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="button" class="btn btn-link waves-effect" id="btnUpdate" name="btnUpdate" value="Save Changes">
+                            <input type="submit" class="btn btn-link waves-effect" id="btnUpdate" name="btnUpdate"  value="SAVE CHANGES">
                             <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
                         </div>
                     </div>
@@ -340,16 +364,20 @@ if(strlen($_SESSION['adminSession'])==0)
     <script src="../../js/demo.js"></script>
       <script type="text/javascript">
      $( document ).ready(function() {
+     
+
             
             $('#tblAccounts tbody').on('click','.updateBtn',function(){
             var currow = $(this).closest('tr');
-            var varDocId = currow.find('td:eq(1)').text();
+            var varDocId = currow.find('td:eq(0)').text();
+            var UcollegeName = currow.find('td:eq(1)').text();
             var firstname = currow.find('td:eq(2)').text();
             var lastname = currow.find('td:eq(3)').html();
             var username = currow.find('td:eq(4)').html();
             var password = currow.find('td:eq(5)').html();
             var accounttype = currow.find('td:eq(6)').html();
             $('#varDocId').val(varDocId);
+            $('#UcollegeName').val(UcollegeName);
             $('#uFirstName').val(firstname);
             $('#uLastName').val(lastname);
             $('#uUserName').val(username);
@@ -365,7 +393,8 @@ if(strlen($_SESSION['adminSession'])==0)
             });     
 
             $('#btnAdd').on('click',function(){
-               
+
+                 var collegeName     =   $('#collegeName').val();
                 var varDocId      =   $('#varDocId').val();
                 var firstname     =   $('#firstName').val();
                 var lastname      =   $('#lastName').val();
@@ -373,6 +402,11 @@ if(strlen($_SESSION['adminSession'])==0)
                 var password      =   $('#passWord').val();
                 var accounttype      =   $('#accountType').val();
 
+
+                if (collegeName == "")
+                {   
+                    alert("College Name is Empty!");
+                }
                 if (firstname == "")
                 {   
                     alert("First Name is Empty!");
@@ -402,10 +436,12 @@ if(strlen($_SESSION['adminSession'])==0)
             function processDocument(action){
 
                 var varDocId      =   $('#varDocId').val();
+                var UcollegeName     =   $('#UcollegeName').val();
                 var firstname     =   $('#uFirstName').val();
                 var lastname      =   $('#uLastName').val();
                 var username      =   $('#uUserName').val();
                 var password      =   $('#uPassWord').val();
+                var uorgType       =  $('#uorgType').val();
                 var status        =   1;
                 var accounttype   =   $("#uAccountType option:selected").val();
                 
@@ -415,45 +451,60 @@ if(strlen($_SESSION['adminSession'])==0)
                     data:   {
                             procedure:"UpdateAccounts",
                             varDocId:varDocId,
+                            UcollegeName:UcollegeName,
                             firstname:firstname,
                             lastname:lastname, 
                             username:username,
                             password:password,
                             accounttype:accounttype,
+                            uorgType:uorgType,
                             status:status
                             } ,
-                          dataType: "json"
+                          dataType: "json",
+                          success:function(data)
+                          {
+
+                          }
                 });
-                     location.reload();
+
+                setInterval(function()
+                {
+                    $('#refreshPage').load().fadeIn("slow");
+                },1000);
             }
 
             function saveDocument(action){
 
+                 var collegeName     =   $('#collegeName').val();
                 var firstname     =   $('#firstName').val();
                 var lastname      =   $('#lastName').val();
                 var username      =   $('#userName').val();
                 var password      =   $('#passWord').val();
-                var accounttype      =   $('#accountType').val();
+                var orgType           = $('#orgType').val();
                 var status      =   1;
-                var accounttype   =   $("#uAccountType option:selected").val();
+                var accounttype   =   $("#accountType option:selected").val();
                 
                 $.ajax({
                     type: "POST",       
                     url: "getData.php",
                     data:   {
                             procedure:"saveAccount",
+                             collegeName:collegeName,
                             firstname:firstname,
                             lastname:lastname, 
                             username:username,
                             password:password,
                             accounttype:accounttype,
+                            orgType:orgType,
                             status:status
                             } ,
                           dataType: "json"
                 });
 
-                location.reload(); 
-              
+                setInterval(function()
+                {
+                    $('#refreshPage').load().fadeIn("slow");
+                },1000);
             }
 
       

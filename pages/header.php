@@ -45,4 +45,6 @@
     <link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
     <!-- Custom Css -->
     <link href="../../css/style.css" rel="stylesheet">
+    <style type="text/css">
+    </style>
 </head>
