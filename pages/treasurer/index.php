@@ -145,10 +145,10 @@ if(strlen($_SESSION['accountSession'])==0)
                                 $query = $dbh -> prepare($sql);
                                 $query->execute();
                                 $results=$query->fetch(PDO::FETCH_ASSOC);
-                                $count = $results['count'];
+                                $count1 = $results['count'];
                                 
                                 ?>          
-                            <div class="number"><?php echo $count; ?></div>
+                            <div class="number"><?php echo $count1; ?></div>
                         </div>
                     </div>
                 </div>

@@ -29,10 +29,14 @@ if(isset($_POST['signin']))
               }
               else
               {
-                     $_SESSION['accountSession']=$_POST['username'];
+                    $_SESSION['accountSession']=$_POST['username'];
                     if($accounttype == "Secretary")
                     {
                             echo "<script type='text/javascript'> document.location = '../secretary/index.php'; </script>";
+                    }
+                    else if($accounttype == "Admin")
+                    {
+                            echo "<script type='text/javascript'> document.location = '../admin/index.php'; </script>";
                     }
                     else if($accounttype == "Treasurer")
                     {
@@ -42,16 +46,12 @@ if(isset($_POST['signin']))
                     {
                               echo "<script type='text/javascript'> document.location = '../adviser/index.php'; </script>";
                     }
-                    
-        
               } 
         }
-
   else
   {
     echo "<script>alert('Invalid Details');</script>";
   }
-
 }
 ?>
 <body class="login-page">

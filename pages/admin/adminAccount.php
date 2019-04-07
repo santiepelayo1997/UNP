@@ -53,7 +53,7 @@ if(strlen($_SESSION['adminSession'])==0)
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="pull-right"><a href="login.php" class="js-right-sidebar" data-close="true"><i class="material-icons">exit_to_app</i></a></li>
+                      <li class="pull-right"><a href="../home/login.php" class="js-right-sidebar" data-close="true"><i class="material-icons">exit_to_app</i></a></li>
                 </ul>
             </div>
         </div>
