@@ -13,13 +13,12 @@ if($_POST["procedure"]=="UpdateAccounts")
                 $lastname=$_POST['lastname'];
                 $username=$_POST['username'];
                 $password=$_POST['password'];
-                $accounttype=$_POST['accounttype'];
                 $UcollegeName=$_POST['UcollegeName'];
                 $uorgType = $_POST['uorgType'];
                 $id=$_POST['varDocId'];
                 $status=0;
                 
-                $sql = "UPDATE tbl_accounts set collegename=:UcollegeName,firstname=:firstname,lastname=:lastname,username=:username,password=:password,account_type=:accounttype,orgtype=:orgtype WHERE id=:id";
+                $sql = "UPDATE tbl_accounts set collegename=:UcollegeName,firstname=:firstname,lastname=:lastname,username=:username,password=:password,orgtype=:orgtype WHERE id=:id";
 
                 $query = $dbh->prepare($sql);
                 $query -> bindParam(':id',$id, PDO::PARAM_STR);
@@ -28,7 +27,6 @@ if($_POST["procedure"]=="UpdateAccounts")
                 $query -> bindParam(':lastname',$lastname, PDO::PARAM_STR);
                 $query -> bindParam(':username',$username, PDO::PARAM_STR);
                 $query -> bindParam(':password',$password, PDO::PARAM_STR);
-                $query -> bindParam(':accounttype',$accounttype, PDO::PARAM_STR);
                  $query -> bindParam(':orgtype',$uorgType, PDO::PARAM_STR);
                 $query -> execute();
 
@@ -41,11 +39,10 @@ else if ($_POST["procedure"]=="saveAccount")
             $lastName=$_POST['lastname'];
             $userName=$_POST['username'];
             $passWord=$_POST['password'];
-            $accountType=$_POST['accounttype'];
             $orgType=$_POST['orgType'];
             $status = 1;
 
-            $sql="INSERT INTO tbl_accounts (collegename,firstname,lastname,username,password,account_type,orgtype,status) VALUES(:collegeName,:firstName,:lastName,:userName,:passWord,:accountType,:orgType,:status)";
+            $sql="INSERT INTO tbl_accounts (collegename,firstname,lastname,username,password,orgtype,status) VALUES(:collegeName,:firstName,:lastName,:userName,:passWord,:orgType,:status)";
 
             $query = $dbh->prepare($sql);
               $query->bindParam(':collegeName',$collegeName,PDO::PARAM_STR);
@@ -53,7 +50,6 @@ else if ($_POST["procedure"]=="saveAccount")
             $query->bindParam(':lastName',$lastName,PDO::PARAM_STR);
             $query->bindParam(':userName',$userName,PDO::PARAM_STR);
             $query->bindParam(':passWord',$passWord,PDO::PARAM_STR);
-            $query->bindParam(':accountType',$accountType,PDO::PARAM_STR);
              $query->bindParam(':orgType',$orgType,PDO::PARAM_STR);
             $query->bindParam(':status',$status,PDO::PARAM_STR);
             $query->execute();

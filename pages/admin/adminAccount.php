@@ -11,7 +11,6 @@ if(strlen($_SESSION['adminSession'])==0)
     }
     else
     {
-
      if(isset($_GET['empid']))
         {
                 $id=$_GET['empid'];
@@ -22,9 +21,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 $query -> execute();
                 header('location:adminAccount.php');
         }
-
-
-
      }
 
 ?>
@@ -124,7 +120,6 @@ if(strlen($_SESSION['adminSession'])==0)
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Password</th>
-                                            <th>Account Type</th>
                                              <th>Organizational Type</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
@@ -149,7 +144,6 @@ if(strlen($_SESSION['adminSession'])==0)
                                             <td><?php echo htmlentities($result->lastname);?></td>
                                             <td><?php echo htmlentities($result->username);?></td>
                                            <td><?php echo htmlentities($result->password);?></td>
-                                            <td><?php echo htmlentities($result->account_type);?></td>
                                               <td><?php echo htmlentities($result->orgtype);?></td>
                                             <td><?php echo htmlentities($result->created_date);?></td>
                                              <td>
@@ -231,15 +225,6 @@ if(strlen($_SESSION['adminSession'])==0)
                                         <option value="Accredited">Accredited</option>
                                     </select>
                                 </div>
-                               <div class="col-sm-6">
-                                     <label>Account Type</label>
-                                    <select class="form-control show-tick" name="accountType"  id="accountType" >
-                                                <option value="Treasurer">Treasurer</option>
-                                                <option value="Secretary">Secretary</option>
-                                                <option value="Adviser">Adviser</option>
-                                    </select>
-                                </div>
-                           
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -316,14 +301,6 @@ if(strlen($_SESSION['adminSession'])==0)
                                         <option value="Accredited">Accredited</option>
                                     </select>
                                 </div>
-                                    <div class="col-sm-6">
-                                     <label>Account Type</label>
-                                    <select class="form-control show-tick" name="uAccountType"  id="uAccountType" >
-                                                <option value="Treasurer" selected="">Treasurer</option>
-                                                <option value="Secretary">Secretary</option>
-                                                <option value="Adviser">Adviser</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -375,15 +352,13 @@ if(strlen($_SESSION['adminSession'])==0)
             var lastname = currow.find('td:eq(3)').html();
             var username = currow.find('td:eq(4)').html();
             var password = currow.find('td:eq(5)').html();
-            var accounttype = currow.find('td:eq(6)').html();
             $('#varDocId').val(varDocId);
             $('#UcollegeName').val(UcollegeName);
             $('#uFirstName').val(firstname);
             $('#uLastName').val(lastname);
             $('#uUserName').val(username);
             $('#uPassWord').val(password);
-            $("select#uAccountType").val(accounttype);
-       
+
             });     
 
              $('#btnUpdate').on('click',function(){
@@ -400,7 +375,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 var lastname      =   $('#lastName').val();
                 var username      =   $('#userName').val();
                 var password      =   $('#passWord').val();
-                var accounttype      =   $('#accountType').val();
 
 
                 if (collegeName == "")
@@ -426,7 +400,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 else
                 {
 
-
                     if (confirm("Do you want to save this account?")) {
                         saveDocument("save");    
                     }   
@@ -443,7 +416,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 var password      =   $('#uPassWord').val();
                 var uorgType       =  $('#uorgType').val();
                 var status        =   1;
-                var accounttype   =   $("#uAccountType option:selected").val();
                 
                 $.ajax({
                     type: "POST",       
@@ -456,15 +428,10 @@ if(strlen($_SESSION['adminSession'])==0)
                             lastname:lastname, 
                             username:username,
                             password:password,
-                            accounttype:accounttype,
                             uorgType:uorgType,
                             status:status
                             } ,
-                          dataType: "json",
-                          success:function(data)
-                          {
-
-                          }
+                          dataType: "json"
                 });
 
                 setInterval(function()
@@ -482,7 +449,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 var password      =   $('#passWord').val();
                 var orgType           = $('#orgType').val();
                 var status      =   1;
-                var accounttype   =   $("#accountType option:selected").val();
                 
                 $.ajax({
                     type: "POST",       
@@ -494,7 +460,6 @@ if(strlen($_SESSION['adminSession'])==0)
                             lastname:lastname, 
                             username:username,
                             password:password,
-                            accounttype:accounttype,
                             orgType:orgType,
                             status:status
                             } ,
@@ -506,8 +471,6 @@ if(strlen($_SESSION['adminSession'])==0)
                     $('#refreshPage').load().fadeIn("slow");
                 },1000);
             }
-
-      
 
 
     });     

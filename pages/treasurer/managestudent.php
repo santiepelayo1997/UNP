@@ -10,7 +10,7 @@ if(strlen($_SESSION['accountSession'])==0)
     }
     else
     {
-         $createby =  $_SESSION['accountSession'];
+     $createby =  $_SESSION['accountSession'];
      if(isset($_GET['id']))
         {
                 $id=$_GET['id'];
@@ -25,15 +25,20 @@ if(strlen($_SESSION['accountSession'])==0)
         if(isset($_POST['btnSave'])) 
 
             { 
-                $feeName = $_POST['feeName'];
-                $amount = $_POST['amount'];
+                $firstName = $_POST['firstName'];
+                $lastName = $_POST['lastName'];
+                $section = $_POST['section'];
+                $collegeName = $_POST['collegeName'];
+                $gender = $_POST['gender'];
             
-                $sth=$dbh->prepare("INSERT INTO tbl_fees(name,amount,createdBy)values(:feeName,:amount,:createBy) "); 
-                $sth->bindParam(':feeName',$feeName); 
-                $sth->bindParam(':amount',$amount); 
-                $sth->bindParam(':createBy',$createby); 
+                $sth=$dbh->prepare("INSERT INTO tbl_students(firstname,lastname,section,collegename,gender)values(:firstName,:lastName,:section,:collegeName,:gender) "); 
+                $sth->bindParam(':firstName',$firstName); 
+                $sth->bindParam(':lastName',$lastName); 
+                $sth->bindParam(':section',$section);
+                $sth->bindParam(':collegeName',$collegeName); 
+                $sth->bindParam(':gender',$gender);  
                 $sth->execute(); 
-                 header('location:manageFees.php');
+                 header('location:managestudent.php');
 
            } 
 
@@ -51,17 +56,8 @@ if(strlen($_SESSION['accountSession'])==0)
                  $query -> bindParam(':updateBy',$createby);
                 $query -> execute();
                 header('location:manageFees.php');
-               
         }
-
-
-
-
-
      }
-
-
-
 
 ?>
 <body class="theme-blue">
@@ -110,6 +106,7 @@ if(strlen($_SESSION['accountSession'])==0)
                 <div class="info-container">
                      <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
                     <div class="email">TREASURER</div>
+                      <?php include "../changeaccount.php" ?>
                   
                 </div>
             </div>
@@ -172,7 +169,7 @@ if(strlen($_SESSION['accountSession'])==0)
 
                                 <button type="button" class="btn btn-info waves-effect" style="border-radius:20px;" data-toggle="modal" data-target="#addModal">Add New Student</button>&nbsp;&nbsp;
                              <br></br>
-                            <table id="tblFees" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
+                            <table id="tblStudent" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
                                         <th>Id</th>
@@ -209,7 +206,7 @@ if(strlen($_SESSION['accountSession'])==0)
                                                 <td> <?php echo htmlentities($result->collegename);?></td>
                                                 <td> <?php echo htmlentities($result->gender);?></td>
                                                 <td> 
-                                                          <a   style="border-radius:10px;" class="update btn btn-info waves-effect" data-toggle="modal" data-target="#updateModal" ><i class="material-icons">note_add</i>&nbsp;Add Fee</a>
+                                               <button type="button"   style="border-radius:10px;" class="update btn btn-info waves-effect" data-toggle="modal" data-target="#updateModal" >ADD FEE</button>
                                                 </td>
                                         </tr>
                                  <?php $cnt++; } }?>
@@ -221,72 +218,7 @@ if(strlen($_SESSION['accountSession'])==0)
                 </div>
             </div>
         </div>
-    
-                       <!-- Add Modal  -->
-            <div class="modal fade" id="addModal" role="dialog">
-                <div class="modal-dialog" role="document">
-                       <form method="POST" enctype="multipart/form-data"> 
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="defaultModalLabel">Add New Student</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row clearfix">
-                               <div class="col-sm-6">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" class="form-control" name="feeName" id="feeName"/>
-                                            <label class="form-label">First Name</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" class="form-control" name="amount" id="amount"/>
-                                            <label class="form-label">Last Name</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          <div class="row clearfix">
-                               <div class="col-sm-6">
-                                     <label>Section</label>
-                                    <select class="form-control show-tick" name="uorgType" id="uorgType">
-                                        <option value="Mandated" selected>Mandated</option>
-                                        <option value="Accredited">Accredited</option>
-                                    </select>
-                                </div>
-                                    <div class="col-sm-6">
-                                     <label>College Name</label>
-                                    <select class="form-control show-tick" name="collegeName"  id="collegeName" >
-                                                <option value="Treasurer" selected="">Treasurer</option>
-                                                <option value="Secretary">Secretary</option>
-                                                <option value="Adviser">Adviser</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                             <div class="row clearfix">
-                               <div class="col-sm-6">
-                                     <label>Gender</label>
-                                    <select class="form-control show-tick" name="gender" id="gender">
-                                        <option value="MALE">MALE</option>
-                                        <option value="FEMALE">FEMALE</option>
-                                    </select>
-                                </div>
-                           
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="submit" class="btn btn-link waves-effect" id="btnSave" name="btnSave" value="SAVE CHANGES">
-                            <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
-                        </div>
-                    </div>
-                </form>
-                </div>
-            </div>
-             <!-- Add Modal  -->
+         <!-- Add Modal  -->
             <div class="modal fade" id="updateModal" role="dialog">
                 <div class="modal-dialog" role="document">
                        <form method="POST" enctype="multipart/form-data"> 
@@ -325,6 +257,67 @@ if(strlen($_SESSION['accountSession'])==0)
                 </div>
             </div>
 
+                       <!-- Add Modal  -->
+            <div class="modal fade" id="addModal" role="dialog">
+                <div class="modal-dialog" role="document">
+                       <form method="POST" enctype="multipart/form-data"> 
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="defaultModalLabel">Add New Student</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row clearfix">
+                               <div class="col-sm-6">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="firstName" id="firstName"/>
+                                            <label class="form-label">First Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="lastName" id="lastName"/>
+                                            <label class="form-label">Last Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          <div class="row clearfix">
+                               <div class="col-sm-6">
+                                     <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="section" id="section"/>
+                                            <label class="form-label">Section</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="col-sm-6">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="collegeName" id="collegeName"/>
+                                            <label class="form-label">College Name</label>
+                                        </div>
+                                    </div>
+                            </div>
+                               <div class="col-sm-6">
+                                     <label>Gender</label>
+                                    <select class="form-control show-tick" name="gender" id="gender">
+                                        <option value="MALE">MALE</option>
+                                        <option value="FEMALE">FEMALE</option>
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-link waves-effect" id="btnSave" name="btnSave" value="SAVE CHANGES">
+                            <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+        
 
   
     </section>
@@ -356,7 +349,7 @@ if(strlen($_SESSION['accountSession'])==0)
 
         <script type="text/javascript">
              $(document).ready(function(){
-             $('#tblFees tbody').on('click','.update',function(){
+             $('#tblStudent tbody').on('click','.update',function(){
                    var currow = $(this).closest('tr');
                     var varDocId = currow.find('td:eq(0)').text();
                     var firstname = currow.find('td:eq(1)').text();

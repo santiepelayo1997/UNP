@@ -6,14 +6,39 @@
 
 if(isset($_POST['signin']))
 {
+
+
     $uname=$_POST['username'];
     $password=$_POST['password'];
-    $sql ="SELECT username,password,status,id,account_type FROM tbl_accounts WHERE username=:uname and password=:password";
-    $query= $dbh -> prepare($sql);
-    $query-> bindParam(':uname', $uname, PDO::PARAM_STR);
-    $query-> bindParam(':password', $password, PDO::PARAM_STR);
-    $query-> execute();
-    $results=$query->fetchAll(PDO::FETCH_OBJ);
+    if($uname=="admin")
+    {   
+       $sql ="SELECT * FROM tbl_adminaccount WHERE username=:uname and password=:password";
+        $query= $dbh -> prepare($sql);
+        $query-> bindParam(':uname', $uname, PDO::PARAM_STR);
+        $query-> bindParam(':password', $password, PDO::PARAM_STR);
+        $query-> execute();
+        $results=$query->fetchAll(PDO::FETCH_OBJ);
+
+            if($query->rowCount() > 0)
+            { 
+                 foreach ($results as $result)
+                  {
+                    $status=$result->status;
+                    $_SESSION['adminSession']=$result->id;
+                  }
+                  echo "<script type='text/javascript'> document.location = '../admin/index.php'; </script>";
+            }
+        }
+        else
+        {
+          $uname=$_POST['username'];
+          $password=$_POST['password'];
+          $sql ="SELECT * FROM tbl_accounts WHERE username=:uname and password=:password";
+          $query= $dbh -> prepare($sql);
+          $query-> bindParam(':uname', $uname, PDO::PARAM_STR);
+          $query-> bindParam(':password', $password, PDO::PARAM_STR);
+          $query-> execute();
+          $results=$query->fetchAll(PDO::FETCH_OBJ);
 
         if($query->rowCount() > 0)
         {
@@ -30,28 +55,17 @@ if(isset($_POST['signin']))
               else
               {
                     $_SESSION['accountSession']=$_POST['username'];
-                    if($accounttype == "Secretary")
-                    {
-                            echo "<script type='text/javascript'> document.location = '../secretary/index.php'; </script>";
-                    }
-                    else if($accounttype == "Admin")
-                    {
-                            echo "<script type='text/javascript'> document.location = '../admin/index.php'; </script>";
-                    }
-                    else if($accounttype == "Treasurer")
-                    {
-                              echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-                    }
-                    else if($accounttype == "Adviser")
-                    {
-                              echo "<script type='text/javascript'> document.location = '../adviser/index.php'; </script>";
-                    }
+                    echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
               } 
         }
-  else
-  {
-    echo "<script>alert('Invalid Details');</script>";
-  }
+        else
+        {
+          echo "<script>alert('Invalid Details');</script>";
+        }
+
+
+    }
+ 
 }
 ?>
 <body class="login-page">

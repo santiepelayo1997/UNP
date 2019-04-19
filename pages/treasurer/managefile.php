@@ -148,7 +148,8 @@ if(strlen($_SESSION['accountSession'])==0)
                 </div>
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
-                    <div class="email">SECRETARY</div>
+                    <div class="email">TREASURER</div>
+                      <?php include "../changeaccount.php" ?>
               
                 </div>
             </div>

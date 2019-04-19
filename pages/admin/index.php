@@ -10,7 +10,6 @@ if(strlen($_SESSION['adminSession'])==0)
     }
     else
     {
-
      if(isset($_GET['empid']))
         {
                 $id=$_GET['empid'];
@@ -21,9 +20,6 @@ if(strlen($_SESSION['adminSession'])==0)
                 $query -> execute();
                 header('location:index.php');
         }
-
-
-
      }
 ?>
 <style type="text/css">

@@ -60,8 +60,9 @@ if(strlen($_SESSION['accountSession'])==0)
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
-                  <li class="pull-right"><a href="../home/login.php" class="js-right-sidebar" data-close="true"><i class="material-icons">exit_to_app</i></a></li>
+                    <li class="pull-right"><a href="../home/login.php" class="js-right-sidebar" data-close="true"><i class="material-icons">exit_to_app</i></a></li>
                 </ul>
+
             </div>
         </div>
     </nav>
@@ -76,8 +77,8 @@ if(strlen($_SESSION['accountSession'])==0)
                 </div>
                 <div class="info-container">
                         <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
-                    <div class="email">SECRETARY</div>
-                
+                    <div class="email">TREASURER</div>
+                        <?php include "../changeaccount.php" ?>
                 </div>
             </div>
             <!-- #User Info -->
