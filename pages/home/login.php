@@ -32,31 +32,51 @@ if(isset($_POST['signin']))
         else
         {
           $uname=$_POST['username'];
-          $password=$_POST['password'];
-          $sql ="SELECT * FROM tbl_accounts WHERE username=:uname and password=:password";
+          $password= $_POST['password'];
+          $passclean = filter_var($password, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+          $sql ="SELECT * FROM tbl_accounts WHERE username=:uname";
           $query= $dbh -> prepare($sql);
           $query-> bindParam(':uname', $uname, PDO::PARAM_STR);
-          $query-> bindParam(':password', $password, PDO::PARAM_STR);
           $query-> execute();
-          $results=$query->fetchAll(PDO::FETCH_OBJ);
+          $results=$query->fetch();
+          $hash = $results['password'];
+          $status = $results['status'];
+          $accountType = $results['accountType'];
+             
 
-        if($query->rowCount() > 0)
+       if($query->rowCount() > 0)
         {
-         foreach ($results as $result)
-          {
-            $status=$result->status;
-            $accounttype=$result->account_type;
-            $_SESSION['accountSession']=$result->id;
-          }
+          if (password_verify($password, $hash)) {
+             
               if($status==0)
               {
-                alert("Your account is Inactive. Please contact admin");
+                  echo "<script>alert('Your account is Inactive. Please contact admin');</script>";
               }
               else
               {
-                    $_SESSION['accountSession']=$_POST['username'];
-                    echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-              } 
+              
+                 if ($accountType == "Dean"){
+                     $_SESSION['accountSession']=$_POST['username'];
+                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                 } 
+                 else if ($accountType == "Adviser"){
+                     $_SESSION['accountSession']=$_POST['username'];
+                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                 } 
+                 else if ($accountType == "Governor"){
+                      $_SESSION['accountSession']=$_POST['username'];
+                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                 } 
+                else  if ($accountType == "Secretary" || $accountType = "Governor"){
+                     $_SESSION['accountSession']=$_POST['username'];
+                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                 }
+             }
+              
+            } else {
+                 echo "<script>alert('Invalid Password');</script>";
+            }
+            
         }
         else
         {

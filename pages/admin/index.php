@@ -96,7 +96,6 @@ if(strlen($_SESSION['adminSession'])==0)
             <!-- #Footer -->
         </aside>
     </section>
-
     <section class="content">
         <div class="container-fluid">
                <div class="row clearfix">
@@ -104,8 +103,33 @@ if(strlen($_SESSION['adminSession'])==0)
                          <img id="banner" src="../../images/banner.png" alt="banner">
                     </div>
                 </div>
+                <br>
+               <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-2 bg-blue hover-expand-effect">
+                        <div class="icon">
+                            <i class="material-icons">how_to_reg</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">Total Active Accounts</div>
+                             <?php
+                                $sql = "SELECT COUNT(*) as count from tbl_accounts where status = 1";
+                                $query = $dbh -> prepare($sql);
+                                $query->execute();
+                                $results=$query->fetch(PDO::FETCH_ASSOC);
+                                $count = $results['count'];
+                                
+                                ?>          
+                            <div class="number"><?php echo $count; ?></div>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
         </div>
+
     </section>
+
     <!-- Jquery Core Js -->
     <script src="../../plugins/jquery/jquery.min.js"></script>
 

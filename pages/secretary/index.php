@@ -12,6 +12,13 @@ if(strlen($_SESSION['accountSession'])==0)
     else
     {
     $createby = $_SESSION['accountSession'];
+     $sql = "SELECT * FROM tbl_accounts WHERE tbl_accounts.username = '".$createby."'";
+        $stmt = $dbh->prepare($sql);
+        $stmt ->execute();
+        $results=$stmt->fetch(PDO::FETCH_ASSOC);
+        $firstname = $results['firstname'];
+        $lastname = $results['lastname'];
+        $fullName = $firstname." ".$lastname;
      if(isset($_GET['empid']))
         {
                 $id=$_GET['empid'];
@@ -75,7 +82,7 @@ if(strlen($_SESSION['accountSession'])==0)
                     <img src="../../images/admin.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
-                        <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
+                        <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $fullName; ?></div>
                     <div class="email">SECRETARY</div>
                       <?php include "../changeaccount.php" ?>
                 
@@ -102,6 +109,12 @@ if(strlen($_SESSION['accountSession'])==0)
                         <a href="managefile.php">
                             <i class="material-icons">description</i>
                             <span>Manage Files</span>
+                        </a>
+                    </li>
+                     <li>
+                        <a href="manageAnnouncement.php">
+                            <i class="material-icons">announcement</i>
+                            <span>Manage Announcement</span>
                         </a>
                     </li>
                 </ul>
@@ -147,7 +160,7 @@ if(strlen($_SESSION['accountSession'])==0)
                         </div>
                     </div>
                 </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box-2 bg-blue hover-expand-effect">
                         <div class="icon">
                             <i class="material-icons">folder</i>
@@ -156,6 +169,25 @@ if(strlen($_SESSION['accountSession'])==0)
                             <div class="text">Total Photos</div>
                              <?php
                                 $sql = "SELECT COUNT(*) as count from tbl_pictures";
+                                $query = $dbh -> prepare($sql);
+                                $query->execute();
+                                $results=$query->fetch(PDO::FETCH_ASSOC);
+                                $count = $results['count'];
+                                
+                                ?>          
+                            <div class="number"><?php echo $count; ?></div>
+                        </div>
+                    </div>
+                </div>
+                       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box-2 bg-blue hover-expand-effect">
+                        <div class="icon">
+                            <i class="material-icons">announcement</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">Announcements</div>
+                             <?php
+                                $sql = "SELECT COUNT(*) as count from tbl_announcement";
                                 $query = $dbh -> prepare($sql);
                                 $query->execute();
                                 $results=$query->fetch(PDO::FETCH_ASSOC);

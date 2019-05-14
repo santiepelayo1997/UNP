@@ -22,6 +22,7 @@
       <!-- Demo Js -->
     <script src="../../js/pages/tables/jquery-datatable.js"></script>
     <script src="../../js/pages/ui/modals.js"></script>
+    <script src="../../js/pages/examples/profile.js"></script>
            <!-- Editable Table Plugin Js -->
     <script src="../../plugins/editable-table/mindmup-editabletable.js"></script>
     <script src="../../js/pages/tables/editable-table.js"></script>

@@ -11,6 +11,13 @@ if(strlen($_SESSION['accountSession'])==0)
     else
     {
          $createby =  $_SESSION['accountSession'];
+            $sql = "SELECT * FROM tbl_accounts WHERE tbl_accounts.username = '".$createby."'";
+        $stmt = $dbh->prepare($sql);
+        $stmt ->execute();
+        $results=$stmt->fetch(PDO::FETCH_ASSOC);
+        $firstname = $results['firstname'];
+        $lastname = $results['lastname'];
+        $fullName = $firstname." ".$lastname;
      if(isset($_GET['idpic']))
         {
                 $id=$_GET['idpic'];
@@ -135,7 +142,7 @@ if(strlen($_SESSION['accountSession'])==0)
                     <img src="../../images/admin.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
-                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
+                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $fullName; ?></div>
                     <div class="email">SECRETARY</div>
                     <?php include "../changeaccount.php" ?>
                 </div>
@@ -161,6 +168,12 @@ if(strlen($_SESSION['accountSession'])==0)
                         <a href="managefile.php">
                             <i class="material-icons">description</i>
                             <span>Manage Files</span>
+                        </a>
+                    </li>
+                       <li>
+                        <a href="manageAnnouncement.php">
+                            <i class="material-icons">announcement</i>
+                            <span>Manage Announcement</span>
                         </a>
                     </li>
                 </ul>
@@ -196,7 +209,7 @@ if(strlen($_SESSION['accountSession'])==0)
                             <table id="tblPhoto" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
+                                        <th class="hidden">Id</th>
                                         <th>Name</th>
                                         <th>Picture</th>
                                         <th>Date Created</th>
@@ -224,7 +237,7 @@ if(strlen($_SESSION['accountSession'])==0)
 
 
                                         <tr>
-                                            <td> <?php echo htmlentities($result->id);?></td>
+                                            <td class="hidden"> <?php echo htmlentities($result->id);?></td>
                                              <td> <?php echo htmlentities($result->name);?></td>
                                              <td><img src="../uploads/<?php echo $image; ?>" width="60" height="60"></td>
                                                <td> <?php echo htmlentities($result->created_date);?></td>

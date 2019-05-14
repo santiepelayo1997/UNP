@@ -11,6 +11,13 @@ if(strlen($_SESSION['accountSession'])==0)
     else
     {
         $createby =  $_SESSION['accountSession'];
+            $sql = "SELECT * FROM tbl_accounts WHERE tbl_accounts.username = '".$createby."'";
+        $stmt = $dbh->prepare($sql);
+        $stmt ->execute();
+        $results=$stmt->fetch(PDO::FETCH_ASSOC);
+        $firstname = $results['firstname'];
+        $lastname = $results['lastname'];
+        $fullName = $firstname." ".$lastname;
         if(isset($_GET['fileId']))
         {
                 $id=$_GET['fileId'];
@@ -147,7 +154,7 @@ if(strlen($_SESSION['accountSession'])==0)
                     <img src="../../images/admin.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
-                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
+                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $fullName; ?></div>
                     <div class="email">TREASURER</div>
                       <?php include "../changeaccount.php" ?>
               
@@ -215,7 +222,7 @@ if(strlen($_SESSION['accountSession'])==0)
                             <table id="tblFiles" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
+                                        <th class="hidden">Id</th>
                                         <th>File Name</th>
                                         <th>Date Created</th>
                                         <th>Created By</th>
@@ -231,7 +238,7 @@ if(strlen($_SESSION['accountSession'])==0)
                                     {   
                                        ?>  
                                         <tr>
-                                                <td> <?php echo htmlentities($row['id']);?></td>
+                                                <td class="hidden"> <?php echo htmlentities($row['id']);?></td>
                                                 <td> <?php echo htmlentities($row['name']);?></td>
                                                 <td> <?php echo htmlentities($row['created_date']);?></td>
                                                 <td> <?php echo htmlentities($row['created_by']);?></td>

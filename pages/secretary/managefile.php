@@ -11,10 +11,24 @@ if(strlen($_SESSION['accountSession'])==0)
     else
     {
         $createby =  $_SESSION['accountSession'];
+        $sql = "SELECT * FROM tbl_accounts WHERE tbl_accounts.username = '".$createby."'";
+        $stmt = $dbh->prepare($sql);
+        $stmt ->execute();
+        $results=$stmt->fetch(PDO::FETCH_ASSOC);
+        $firstname = $results['firstname'];
+        $lastname = $results['lastname'];
+        $fullName = $firstname." ".$lastname;
         if(isset($_GET['fileId']))
         {
                 $id=$_GET['fileId'];
-                $status=0;
+
+                $sql = "SELECT * FROM tbl_files WHERE id=:id";
+                $select_stmt= $dbh->prepare($sql); 
+                $select_stmt->bindParam(':id',$id);
+                $select_stmt->execute();
+                $row=$select_stmt->fetch(PDO::FETCH_ASSOC);
+                unlink("../uploads/5cbaefe9022f35.32853668.png");
+        
                 $sql = "DELETE FROM tbl_files WHERE id=:id";
                 $query = $dbh->prepare($sql);   
                 $query -> bindParam(':id',$id, PDO::PARAM_STR);
@@ -60,7 +74,7 @@ if(strlen($_SESSION['accountSession'])==0)
                 $query -> bindParam(':id',$id);
                 $query -> bindParam(':file',$fileName); 
                 $query -> bindParam(':name',$fileName); 
-                $query -> bindParam(':updateBy',$createby); 
+                $query -> bindParam(':updateBy',$fullName); 
                 $query -> execute();
                 header('location:managefile.php');
         }
@@ -68,12 +82,13 @@ if(strlen($_SESSION['accountSession'])==0)
         if(isset($_POST['btnSave'])) 
 
             { 
-              
+                $fileTypeDropDown = $_POST['fileType'];
+                $others = $_POST['others'];
                 $file = $_FILES['myFile'];
                 $fileName = $_FILES['myFile']['name'];
-                 $fileTmpName = $_FILES['myFile']['tmp_name'];
-                  $fileSize = $_FILES['myFile']['size'];
-               $fileError = $_FILES['myFile']['error'];
+                $fileTmpName = $_FILES['myFile']['tmp_name'];
+                $fileSize = $_FILES['myFile']['size'];
+                $fileError = $_FILES['myFile']['error'];
                 $fileType = $_FILES['myFile']['type'];
 
                 $fileExt =explode('.',$fileName);
@@ -97,15 +112,22 @@ if(strlen($_SESSION['accountSession'])==0)
                     echo 'You cannot upload file in this type!';
                 }
               
-                $sth=$dbh->prepare("INSERT INTO tbl_files(name,type,file,created_by)values(:name,:type,:data,:createdby) "); 
+                $sth=$dbh->prepare("INSERT INTO tbl_files(name,type,file,fileType,created_by)values(:name,:type,:data,:fileType,:createdby) "); 
                 $sth->bindParam(':name',$fileName); 
                 $sth->bindParam(':type',$fileType); 
                 $sth->bindParam(':data',$fileName); 
-                $sth->bindParam(':createdby',$createby); 
+                $sth->bindParam(':createdby',$fullName); 
+                $sth->bindParam(':fileType',$fileTypeDropDown); 
+                $sth->bindParam(':fileType',$others); 
                 $sth->execute(); 
              } 
      }
 ?>
+<style type="text/css">
+    td {
+    white-space: nowrap;
+}
+</style>
 <body class="theme-blue">
      <!-- Page Loader -->
     <div class="page-loader-wrapper">
@@ -147,7 +169,7 @@ if(strlen($_SESSION['accountSession'])==0)
                     <img src="../../images/admin.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
-                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
+                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $fullName; ?></div>
                     <div class="email">SECRETARY</div>
                       <?php include "../changeaccount.php" ?>
               
@@ -206,11 +228,13 @@ if(strlen($_SESSION['accountSession'])==0)
 
                                 <button type="button" class="btn btn-info waves-effect" style="border-radius:20px;" data-toggle="modal" data-target="#addModal">Upload File</button>&nbsp;&nbsp;
                              <br></br>
+                                 <div class="table-responsive">
                             <table id="tblFiles" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
+                                        <th class="hidden">Id</th>
                                         <th>File Name</th>
+                                        <th>File Type</th>
                                         <th>Date Created</th>
                                         <th>Created By</th>
                                         <th>Updated By</th>
@@ -225,8 +249,9 @@ if(strlen($_SESSION['accountSession'])==0)
                                     {   
                                        ?>  
                                         <tr>
-                                                <td> <?php echo htmlentities($row['id']);?></td>
+                                                <td class="hidden"> <?php echo htmlentities($row['id']);?></td>
                                                 <td> <?php echo htmlentities($row['name']);?></td>
+                                                    <td> <?php echo htmlentities($row['fileType']);?></td>
                                                 <td> <?php echo htmlentities($row['created_date']);?></td>
                                                 <td> <?php echo htmlentities($row['created_by']);?></td>
                                                 <td> <?php echo htmlentities($row['updateBy']);?></td>
@@ -239,8 +264,9 @@ if(strlen($_SESSION['accountSession'])==0)
                                  <?php  }?>
                                 </tbody>
                             </table>
-                        </div>
+                          </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,10 +281,31 @@ if(strlen($_SESSION['accountSession'])==0)
                         </div>
                         <div class="modal-body">
                              <div class="row clearfix">
-                                <div class="col-sm-12">
+                                <div class="col-sm-6">
                                     <div class="form-group form-float">
                                       <label>File Path</label>
                                       <input type="file" name="myFile" class="form-control"  id="image" accept="*/image">
+                                    </div>
+                                </div>
+                                         <div class="col-sm-6">
+                                     <label>File Type</label>
+                                    <select class="form-control show-tick" name="fileType"  id="fileType" >
+                                             <option value="Operational Plan" >Operational Plan</option>
+                                             <option value="Action Plan">Action Plan</option>
+                                             <option value="Receipt">Receipt</option>
+                                             <option value="Attendance">Attendance</option>
+                                             <option value="Communication Letter">Communication Letter</option>
+                                             <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                               <div class="row clearfix">
+                                <div class="col-sm-6">
+                                    <div class="form-group form-float" style="display: none;" id="others">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="others"  id="others" >
+                                            <label class="form-label">Others</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -336,6 +383,20 @@ if(strlen($_SESSION['accountSession'])==0)
                   $('#hiddenId').val(varDocId);
 
             });  
+               $('#fileType').on('change',function(){
+                //var optionValue = $(this).val();
+                //var optionText = $('#dropdownList option[value="'+optionValue+'"]').text();
+                var optionText = $("#fileType option:selected").text();
+                if(optionText == "Others")
+                {
+                    $("#others").css("display", "");
+                }
+                else
+                {
+                    $("#others").css("display", "none");
+                }
+            });
+
         }); 
        </script>
  

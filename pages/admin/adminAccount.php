@@ -21,9 +21,101 @@ if(strlen($_SESSION['adminSession'])==0)
                 $query -> execute();
                 header('location:adminAccount.php');
         }
+
+        if(isset($_GET['activate']))
+        {
+                $id=$_GET['activate'];
+                $status=1;
+                $sql = "UPDATE tbl_accounts SET status=:status WHERE id=:id";
+                $query = $dbh->prepare($sql);
+                $query -> bindParam(':status',$status, PDO::PARAM_STR);
+                $query -> bindParam(':id',$id, PDO::PARAM_STR);
+                $query -> execute();
+                header('location:adminAccount.php');
+        }
+
+          if(isset($_GET['deactivate']))
+        {
+                $id=$_GET['deactivate'];
+                $status=0;
+                $sql = "UPDATE tbl_accounts SET status=:status WHERE id=:id";
+                $query = $dbh->prepare($sql);
+                $query -> bindParam(':status',$status, PDO::PARAM_STR);
+                $query -> bindParam(':id',$id, PDO::PARAM_STR);
+                $query -> execute();
+                header('location:adminAccount.php');
+        }
+
+
+
+        if(isset($_POST['btnAdd']))
+        {
+                
+                    $firstName=$_POST['firstName'];
+                    $collegeName=$_POST['collegeName'];
+                    $lastName=$_POST['lastName'];
+                    $userName=$_POST['userName'];
+                    $passWord=$_POST['passWord'];
+                    $orgType=$_POST['orgType'];
+                    $accountType=$_POST['accountType'];
+                    $status = 1;
+                    $hash = password_hash($passWord, PASSWORD_DEFAULT);
+
+                    $sql="INSERT INTO tbl_accounts (collegename,firstname,lastname,username,password,orgtype,accountType,status) VALUES(:collegeName,:firstName,:lastName,:userName,:passWord,:orgType,:accountType,:status)";
+
+                    $query = $dbh->prepare($sql);
+                      $query->bindParam(':collegeName',$collegeName,PDO::PARAM_STR);
+                    $query->bindParam(':firstName',$firstName,PDO::PARAM_STR);
+                    $query->bindParam(':lastName',$lastName,PDO::PARAM_STR);
+                    $query->bindParam(':userName',$userName,PDO::PARAM_STR);
+                    $query->bindParam(':passWord',$hash,PDO::PARAM_STR);
+                    $query->bindParam(':orgType',$orgType,PDO::PARAM_STR);
+                    $query->bindParam(':accountType',$accountType,PDO::PARAM_STR);
+                    $query->bindParam(':status',$status,PDO::PARAM_STR);
+                    $query->execute();
+                    $lastInsertId = $dbh->lastInsertId();    
+                        header('location:adminAccount.php');
+           
+        }
+
+       if(isset($_POST['btnUpdate']))
+        {
+            
+                $firstName=$_POST['uFirstName'];
+                $lastname=$_POST['uLastName'];
+                $username=$_POST['uUserName'];
+                $password=$_POST['uPassWord'];
+                $UcollegeName=$_POST['UcollegeName'];
+                $uorgType = $_POST['uorgType'];
+                $UaccountType = $_POST['UpdateAccount'];
+                $id=$_POST['varDocId'];
+                $status=0;
+                
+                $sql = "UPDATE tbl_accounts set collegename=:UcollegeName,firstname=:firstname,lastname=:lastname,username=:username,password=:password,orgtype=:orgtype,accountType=:UaccountType WHERE id=:id";
+
+                $query = $dbh->prepare($sql);
+                $query -> bindParam(':id',$id, PDO::PARAM_STR);
+                $query -> bindParam(':UcollegeName',$UcollegeName, PDO::PARAM_STR);
+                $query -> bindParam(':firstname',$firstName, PDO::PARAM_STR);
+                $query -> bindParam(':lastname',$lastname, PDO::PARAM_STR);
+                $query -> bindParam(':username',$username, PDO::PARAM_STR);
+                $query -> bindParam(':password',$password, PDO::PARAM_STR);
+                $query -> bindParam(':orgtype',$uorgType, PDO::PARAM_STR);
+                $query -> bindParam(':UaccountType',$UaccountType, PDO::PARAM_STR);
+                $query -> execute();
+                $lastInsertId = $dbh->lastInsertId();    
+
+                header('Location: adminAccount.php');
+        }
+
      }
 
 ?>
+<style type="text/css">
+    td {
+    white-space: nowrap;
+}
+</style>
 <body class="theme-blue">
 
     <!-- #END# Page Loader -->
@@ -94,7 +186,7 @@ if(strlen($_SESSION['adminSession'])==0)
     <section class="content">
         <div class="container-fluid">
                      <!-- Basic Examples -->
-        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="myFormId"> 
+        <form method="POST" > 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
@@ -108,21 +200,21 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <input type="hidden" name="varDocId" id="varDocId">
                             <button type="button" class="btn btn-info waves-effect" style="border-radius:20px;" data-toggle="modal" data-target="#defaultModal">Add New Account</button>&nbsp;&nbsp;
                             <br><br>
-                            <div class="refreshPage">
-
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover js-basic-example dataTable" id="tblAccounts">
+                                <table class="table table-bordered table-striped table-hover js-basic-example dataTable" id="tblAccounts" >
                                     <thead>
                                         <tr>
-                                             <th>ID</th>
-                                              <th>College Name</th>
+                                            <th class="hidden">ID</th>
+                                            <th>College Name</th>
                                             <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Password</th>
-                                             <th>Organizational Type</th>
+                                            <th>Organizational Type</th>
+                                            <th>Account Type</th>
                                             <th>Date Created</th>
-                                            <th>Action</th>
+                                            <th>Status</th>
+                                            <th width="70%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -138,16 +230,53 @@ if(strlen($_SESSION['adminSession'])==0)
                                             foreach($results as $result)
                                             {               ?>  
                                         <tr>
-                                            <td> <?php echo htmlentities($result->id);?></td>
-                                              <td> <?php echo htmlentities($result->collegename);?></td>
-                                            <td><?php echo htmlentities($result->firstname);?></td>
-                                            <td><?php echo htmlentities($result->lastname);?></td>
-                                            <td><?php echo htmlentities($result->username);?></td>
-                                           <td><?php echo htmlentities($result->password);?></td>
-                                              <td><?php echo htmlentities($result->orgtype);?></td>
-                                            <td><?php echo htmlentities($result->created_date);?></td>
+                                                <td class="hidden"> <?php echo htmlentities($result->id);?></td>
+                                                <td> <?php echo htmlentities($result->collegename);?></td>
+                                                <td><?php echo htmlentities($result->firstname);?></td>
+                                                <td><?php echo htmlentities($result->lastname);?></td>
+                                                <td><?php echo htmlentities($result->username);?></td>
+                                                <td><?php echo htmlentities($result->password);?></td>
+                                                <td><?php echo htmlentities($result->orgtype);?></td>
+                                                <td><?php echo htmlentities($result->accountType);?></td>
+                                                <td><?php 
+                                                  $date           = date('Y-m-d',strtotime($result->created_date));
+                                           
+                                                    echo htmlentities($date);
+                                                   ?>
+                                                </td>
+                                                  <td><?php 
+                                                        $status = $result->status;
+                                                        if($status == 1)
+                                                        {
+                                                           echo "<span  class=\"label label-success\" style=\"font-size:12px;width:80px;;height:30px;\">Active</span>&nbsp";
+                                                        }
+                                                        else
+                                                        {
+                                                            echo "<span  class=\"label label-danger\" style=\"font-size:12px;width:80px;;height:30px;\">Inactive</span>&nbsp";
+                                                        }
+
+                                                      ?>
+                                                  </td>
                                              <td>
-                                                <a class="btn btn-danger waves-effect"   style="border-radius:10px;" href="adminAccount.php?empid=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to delete this user?');"><i class="material-icons">delete</i></a>&nbsp;&nbsp;<br><button class="updateBtn btn btn-info waves-effect" type="button" data-toggle="modal" data-target="#updateModal" style="border-radius:10px;"><i class="material-icons">update</i></button></td>
+                                                <a class="btn btn-danger waves-effect"   style="border-radius:10px;" href="adminAccount.php?empid=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to delete this user?');"><i class="material-icons">delete</i></a>&nbsp;&nbsp;
+
+
+                                                <button class="updateBtn btn btn-info waves-effect" type="button" data-toggle="modal" data-target="#updateModal" style="border-radius:10px;"><i class="material-icons">update</i></button>&nbsp;
+
+                                                <?php 
+                                                        $status = $result->status;
+                                                        if($status == 1)
+                                                        {
+                                                        ?>
+                                                           <a class="btn btn-danger waves-effect"   style="border-radius:10px;" href="adminAccount.php?deactivate=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to Inactive this user?');"><i class="material-icons">report</i></a>
+                                                     <?php }  else {     ?>
+                                                         
+                                                          <a class="btn btn-success waves-effect"   style="border-radius:10px;" href="adminAccount.php?activate=<?php echo htmlentities($result->id);?>"  onclick="return confirm('Do you want to Activate this user?');"><i class="material-icons">how_to_reg</i></a>
+
+                                                     <?php   } ?>
+
+                                               
+                                            </td>
           
                                         </tr>   
                                          <?php $cnt++;
@@ -158,7 +287,6 @@ if(strlen($_SESSION['adminSession'])==0)
                                 </table>
                             </div>
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -166,7 +294,7 @@ if(strlen($_SESSION['adminSession'])==0)
             <!-- Default Size -->
             <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
-                    
+                  
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="defaultModalLabel">Add New Account</h4>
@@ -176,7 +304,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                <div class="col-sm-12">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="collegeName" id="collegeName"/>
+                                            <input type="text" class="form-control" name="collegeName" id="collegeName" >
                                             <label class="form-label">College Name</label>
                                         </div>
                                     </div>
@@ -184,7 +312,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="firstName" id="firstName"/>
+                                            <input type="text" class="form-control" name="firstName" id="firstName">
                                             <label class="form-label">First Name</label>
                                         </div>
                                     </div>
@@ -193,7 +321,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <div class="col-sm-6">
                                       <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="lastName" id="lastName"/>
+                                            <input type="text" class="form-control" name="lastName" id="lastName" >
                                             <label class="form-label">Last Name</label>
                                         </div>
                                     </div>
@@ -203,7 +331,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="userName" id="userName"/>
+                                            <input type="text" class="form-control" name="userName" id="userName">
                                             <label class="form-label">Username</label>
                                         </div>
                                     </div>
@@ -211,7 +339,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                 <div class="col-sm-6">
                                       <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="passWord"  id="passWord" />
+                                            <input type="text" class="form-control" name="passWord"  id="passWord" >
                                             <label class="form-label">Password</label>
                                         </div>
                                     </div>
@@ -225,7 +353,19 @@ if(strlen($_SESSION['adminSession'])==0)
                                         <option value="Accredited">Accredited</option>
                                     </select>
                                 </div>
-                            </div>
+                                  <div class="col-sm-6">
+                                     <label>Account Type</label>
+                                    <select class="form-control show-tick" name="accountType"  id="accountType" >
+                                             <option value="Secretary" >Secretary</option>
+                                             <option value="Dean">Dean</option>
+                                             <option value="Adviser">Adviser</option>
+                                             <option value="Governor">Governor</option>
+                                    </select>
+                                </div>
+                              </div>
+
+                         
+                     
                         </div>
                         <div class="modal-footer">
                             <input type="submit" class="btn btn-link waves-effect" id="btnAdd" name="btnAdd" value="SAVE">
@@ -238,7 +378,7 @@ if(strlen($_SESSION['adminSession'])==0)
                  <!-- Update Modal  -->
             <div class="modal fade" id="updateModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                     <form method="POST"  action="<?php echo $_SERVER['PHP_SELF']; ?>" action="adminAccount.php"> 
+      
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title" id="defaultModalLabel">Update Account</h4>
@@ -249,8 +389,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                               <label >College Name</label>
-                                            <input type="text" class="form-control" name="UcollegeName" id="UcollegeName"/>
-                                          
+                                            <input type="text" class="form-control" name="UcollegeName" id="UcollegeName"  >
                                         </div>
                                     </div>
                                 </div>
@@ -258,7 +397,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                                 <label>First Name</label>
-                                            <input type="text" class="form-control" name="uFirstName" id="uFirstName"/>
+                                            <input type="text" class="form-control" name="uFirstName" id="uFirstName"  >
                                           
                                         </div>
                                     </div>
@@ -267,7 +406,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                       <div class="form-group form-float">
                                         <div class="form-line">
                                          <label >Last Name</label>
-                                            <input type="text" class="form-control" name="uLastName" id="uLastName"/>
+                                            <input type="text" class="form-control" name="uLastName" id="uLastName"  >
                                
                                         </div>
                                     </div>
@@ -278,7 +417,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                                   <label>Username</label>
-                                            <input type="text" class="form-control" name="uUserName" id="uUserName"/>
+                                            <input type="text" class="form-control" name="uUserName" id="uUserName" >
                                       
                                         </div>
                                     </div>
@@ -287,7 +426,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                       <div class="form-group form-float">
                                         <div class="form-line">
                                               <label >Password</label>
-                                            <input type="text" class="form-control" name="uPassWord" id="uPassWord"/>
+                                            <input type="text" class="form-control" name="uPassWord" id="uPassWord" >
                                           
                                         </div>
                                     </div>
@@ -296,9 +435,18 @@ if(strlen($_SESSION['adminSession'])==0)
                                <div class="row clearfix">
                                <div class="col-sm-6">
                                      <label>Organizational Type</label>
-                                    <select class="form-control show-tick" name="uorgType" id="uorgType">
+                                    <select class="form-control show-tick" name="uorgType" id="uorgType" >
                                         <option value="Mandated" selected>Mandated</option>
                                         <option value="Accredited">Accredited</option>
+                                    </select>
+                                </div>
+                              <div class="col-sm-6">
+                                     <label>Account Type</label>
+                                    <select class="form-control show-tick" name="UpdateAccount"  id="UpdateAccount" >
+                                                <option value="Secretary">Secretary</option>
+                                                <option value="Dean">Dean</option>
+                                                <option value="Adviser">Adviser</option>
+                                                <option value="Governor">Governor</option>
                                     </select>
                                 </div>
                             </div>
@@ -308,7 +456,7 @@ if(strlen($_SESSION['adminSession'])==0)
                             <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
                         </div>
                     </div>
-                </form>
+              
                 </div>
             </div>
 
@@ -338,139 +486,32 @@ if(strlen($_SESSION['adminSession'])==0)
     <script src="../../js/pages/tables/jquery-datatable.js"></script>
 
     <!-- Demo Js -->
-    <script src="../../js/demo.js"></script>
+
       <script type="text/javascript">
      $( document ).ready(function() {
      
-
             
             $('#tblAccounts tbody').on('click','.updateBtn',function(){
             var currow = $(this).closest('tr');
-            var varDocId = currow.find('td:eq(0)').text();
-            var UcollegeName = currow.find('td:eq(1)').text();
-            var firstname = currow.find('td:eq(2)').text();
+            var varDocId = currow.find('td:eq(0)').html();
+            var UcollegeName = currow.find('td:eq(1)').html();
+            var firstname = currow.find('td:eq(2)').html();
             var lastname = currow.find('td:eq(3)').html();
             var username = currow.find('td:eq(4)').html();
             var password = currow.find('td:eq(5)').html();
+            var orgType = currow.find('td:eq(6)').html();
+            var accountType = currow.find('td:eq(7)').html();
             $('#varDocId').val(varDocId);
             $('#UcollegeName').val(UcollegeName);
             $('#uFirstName').val(firstname);
             $('#uLastName').val(lastname);
             $('#uUserName').val(username);
             $('#uPassWord').val(password);
+            $('#uorgType').val(orgType);
+            $('#UpdateAccount').val(accountType);
 
             });     
 
-             $('#btnUpdate').on('click',function(){
-                    if (confirm("Do you want to update this account?")) {
-                        processDocument("update");    
-                    }            
-            });     
-
-            $('#btnAdd').on('click',function(){
-
-                 var collegeName     =   $('#collegeName').val();
-                var varDocId      =   $('#varDocId').val();
-                var firstname     =   $('#firstName').val();
-                var lastname      =   $('#lastName').val();
-                var username      =   $('#userName').val();
-                var password      =   $('#passWord').val();
-
-
-                if (collegeName == "")
-                {   
-                    alert("College Name is Empty!");
-                }
-                if (firstname == "")
-                {   
-                    alert("First Name is Empty!");
-                }
-                else if(lastname == "")
-                {
-                    alert("Last Name is Empty!");
-                }
-                else if(username == "")
-                {
-                     alert("Username is Empty!");
-                }
-                 else if(password == "")
-                {
-                     alert("Password is Empty!");
-                }
-                else
-                {
-
-                    if (confirm("Do you want to save this account?")) {
-                        saveDocument("save");    
-                    }   
-                }         
-            });     
-
-            function processDocument(action){
-
-                var varDocId      =   $('#varDocId').val();
-                var UcollegeName     =   $('#UcollegeName').val();
-                var firstname     =   $('#uFirstName').val();
-                var lastname      =   $('#uLastName').val();
-                var username      =   $('#uUserName').val();
-                var password      =   $('#uPassWord').val();
-                var uorgType       =  $('#uorgType').val();
-                var status        =   1;
-                
-                $.ajax({
-                    type: "POST",       
-                    url: "getData.php",
-                    data:   {
-                            procedure:"UpdateAccounts",
-                            varDocId:varDocId,
-                            UcollegeName:UcollegeName,
-                            firstname:firstname,
-                            lastname:lastname, 
-                            username:username,
-                            password:password,
-                            uorgType:uorgType,
-                            status:status
-                            } ,
-                          dataType: "json"
-                });
-
-                setInterval(function()
-                {
-                    $('#refreshPage').load().fadeIn("slow");
-                },1000);
-            }
-
-            function saveDocument(action){
-
-                 var collegeName     =   $('#collegeName').val();
-                var firstname     =   $('#firstName').val();
-                var lastname      =   $('#lastName').val();
-                var username      =   $('#userName').val();
-                var password      =   $('#passWord').val();
-                var orgType           = $('#orgType').val();
-                var status      =   1;
-                
-                $.ajax({
-                    type: "POST",       
-                    url: "getData.php",
-                    data:   {
-                            procedure:"saveAccount",
-                             collegeName:collegeName,
-                            firstname:firstname,
-                            lastname:lastname, 
-                            username:username,
-                            password:password,
-                            orgType:orgType,
-                            status:status
-                            } ,
-                          dataType: "json"
-                });
-
-                setInterval(function()
-                {
-                    $('#refreshPage').load().fadeIn("slow");
-                },1000);
-            }
 
 
     });     

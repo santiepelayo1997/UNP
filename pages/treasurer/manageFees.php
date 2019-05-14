@@ -11,6 +11,13 @@ if(strlen($_SESSION['accountSession'])==0)
     else
     {
          $createby =  $_SESSION['accountSession'];
+             $sql = "SELECT * FROM tbl_accounts WHERE tbl_accounts.username = '".$createby."'";
+        $stmt = $dbh->prepare($sql);
+        $stmt ->execute();
+        $results=$stmt->fetch(PDO::FETCH_ASSOC);
+        $firstname = $results['firstname'];
+        $lastname = $results['lastname'];
+        $fullName = $firstname." ".$lastname;
      if(isset($_GET['id']))
         {
                 $id=$_GET['id'];
@@ -108,7 +115,7 @@ if(strlen($_SESSION['accountSession'])==0)
                     <img src="../../images/admin.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
-                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $createby; ?></div>
+                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $fullName; ?></div>
                     <div class="email">TREASURER</div>
                       <?php include "../changeaccount.php" ?>
                 </div>
@@ -175,7 +182,7 @@ if(strlen($_SESSION['accountSession'])==0)
                             <table id="tblFees" class="table table-striped table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
-                                        <th>Id</th>
+                                        <th class="hidden">Id</th>
                                         <th>Name</th>
                                         <th>Amount</th>
                                         <th>Date Created</th>
@@ -203,7 +210,7 @@ if(strlen($_SESSION['accountSession'])==0)
 
 
                                         <tr>
-                                            <td> <?php echo htmlentities($result->id);?></td>
+                                            <td class='hidden'> <?php echo htmlentities($result->id);?></td>
                                              <td> <?php echo htmlentities($result->name);?></td>
                                               <td> <?php echo htmlentities($result->amount);?></td>
                                                <td> <?php echo htmlentities($result->createdDate);?></td>
