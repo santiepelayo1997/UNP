@@ -42,6 +42,7 @@ if(isset($_POST['signin']))
           $hash = $results['password'];
           $status = $results['status'];
           $accountType = $results['accountType'];
+          $orgType = $results['orgtype'];
              
 
        if($query->rowCount() > 0)
@@ -54,23 +55,32 @@ if(isset($_POST['signin']))
               }
               else
               {
+                if ($orgType == "ACTS")
+                {
+                        if ($accountType == "Dean"){
+                           $_SESSION['accountSession']=$_POST['username'];
+                         
+                         } 
+                         else if ($accountType == "Adviser"){
+                             $_SESSION['accountSession']=$_POST['username'];
+                             echo "<script type='text/javascript'> document.location = '../adviser/index.php'; </script>";
+                         } 
+                         else if ($accountType == "President"){
+                              $_SESSION['accountSession']=$_POST['username'];
+                             echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                         } 
+                        else  if ($accountType == "Secretary" || $accountType = "Governor"){
+                             $_SESSION['accountSession']=$_POST['username'];
+                             echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
+                         }
+                }
+                else 
+                {
+                     $_SESSION['accountSession']=$_POST['username'];
+                     echo "<script type='text/javascript'> document.location = '../nso/index.php'; </script>";
+                }
               
-                 if ($accountType == "Dean"){
-                     $_SESSION['accountSession']=$_POST['username'];
-                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-                 } 
-                 else if ($accountType == "Adviser"){
-                     $_SESSION['accountSession']=$_POST['username'];
-                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-                 } 
-                 else if ($accountType == "Governor"){
-                      $_SESSION['accountSession']=$_POST['username'];
-                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-                 } 
-                else  if ($accountType == "Secretary" || $accountType = "Governor"){
-                     $_SESSION['accountSession']=$_POST['username'];
-                     echo "<script type='text/javascript'> document.location = '../treasurer/index.php'; </script>";
-                 }
+             
              }
               
             } else {
@@ -96,8 +106,8 @@ if(isset($_POST['signin']))
         <div class="card">
               <div class="header bg-blue">
                <center> <img style="width:100px; height:100px;" src="../../images/logo.png" alt="logo">
-                <br><br><center><b><p>Welcome to University of Northern Phillipines</p></b></center><br> 
-                <h2>Login your account.</h2></center>
+                  <br> <br><h2>UNP : ADS</h2><br>
+                  <h2>A Web-based Accounting and Document Management System</h2>
               </div>
             <div class="body">
               <br>

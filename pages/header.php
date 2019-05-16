@@ -42,6 +42,7 @@
     <link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
     <!-- Custom Css -->
     <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/sweetalert2.min.css" rel="stylesheet">
     <style type="text/css">
 	    	/* fallback */
 	@font-face {

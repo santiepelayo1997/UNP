@@ -21,6 +21,7 @@
     <script src="../../plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
       <!-- Demo Js -->
     <script src="../../js/pages/tables/jquery-datatable.js"></script>
+    <script src="../../js/sweetalert2.min.js"></script>
     <script src="../../js/pages/ui/modals.js"></script>
     <script src="../../js/pages/examples/profile.js"></script>
            <!-- Editable Table Plugin Js -->

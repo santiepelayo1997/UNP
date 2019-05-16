@@ -31,7 +31,8 @@ if(strlen($_SESSION['adminSession'])==0)
                 $query -> bindParam(':status',$status, PDO::PARAM_STR);
                 $query -> bindParam(':id',$id, PDO::PARAM_STR);
                 $query -> execute();
-                header('location:adminAccount.php');
+                  $btnSuccess = 3;
+              
         }
 
           if(isset($_GET['deactivate']))
@@ -43,12 +44,10 @@ if(strlen($_SESSION['adminSession'])==0)
                 $query -> bindParam(':status',$status, PDO::PARAM_STR);
                 $query -> bindParam(':id',$id, PDO::PARAM_STR);
                 $query -> execute();
-                header('location:adminAccount.php');
+                $btnSuccess = 2;
         }
 
-
-
-        if(isset($_POST['btnAdd']))
+         if(isset($_POST['btnAdd']))
         {
                 
                     $firstName=$_POST['firstName'];
@@ -59,27 +58,35 @@ if(strlen($_SESSION['adminSession'])==0)
                     $orgType=$_POST['orgType'];
                     $accountType=$_POST['accountType'];
                     $status = 1;
+                   
                     $hash = password_hash($passWord, PASSWORD_DEFAULT);
+                    try
+                    {
+                           $sql="INSERT INTO tbl_accounts (collegename,firstname,lastname,username,password,orgtype,accountType,status) VALUES(:collegeName,:firstName,:lastName,:userName,:passWord,:orgType,:accountType,:status)";
 
-                    $sql="INSERT INTO tbl_accounts (collegename,firstname,lastname,username,password,orgtype,accountType,status) VALUES(:collegeName,:firstName,:lastName,:userName,:passWord,:orgType,:accountType,:status)";
+                            $query = $dbh->prepare($sql);
+                            $query->bindParam(':collegeName',$collegeName,PDO::PARAM_STR);
+                            $query->bindParam(':firstName',$firstName,PDO::PARAM_STR);
+                            $query->bindParam(':lastName',$lastName,PDO::PARAM_STR);
+                            $query->bindParam(':userName',$userName,PDO::PARAM_STR);
+                            $query->bindParam(':passWord',$hash,PDO::PARAM_STR);
+                            $query->bindParam(':orgType',$orgType,PDO::PARAM_STR);
+                            $query->bindParam(':accountType',$accountType,PDO::PARAM_STR);
+                            $query->bindParam(':status',$status,PDO::PARAM_STR);
+                            $query->execute();
+                            $btnSuccess = 1;
+                          
+                    }
+                    catch(Exception $e)
+                    {
+                          $btnSuccess = 0;
+                    }
 
-                    $query = $dbh->prepare($sql);
-                      $query->bindParam(':collegeName',$collegeName,PDO::PARAM_STR);
-                    $query->bindParam(':firstName',$firstName,PDO::PARAM_STR);
-                    $query->bindParam(':lastName',$lastName,PDO::PARAM_STR);
-                    $query->bindParam(':userName',$userName,PDO::PARAM_STR);
-                    $query->bindParam(':passWord',$hash,PDO::PARAM_STR);
-                    $query->bindParam(':orgType',$orgType,PDO::PARAM_STR);
-                    $query->bindParam(':accountType',$accountType,PDO::PARAM_STR);
-                    $query->bindParam(':status',$status,PDO::PARAM_STR);
-                    $query->execute();
-                    $lastInsertId = $dbh->lastInsertId();    
-                        header('location:adminAccount.php');
-           
+                          
         }
 
-       if(isset($_POST['btnUpdate']))
-        {
+          if(isset($_POST['btnUpdate']))
+          {
             
                 $firstName=$_POST['uFirstName'];
                 $lastname=$_POST['uLastName'];
@@ -90,23 +97,34 @@ if(strlen($_SESSION['adminSession'])==0)
                 $UaccountType = $_POST['UpdateAccount'];
                 $id=$_POST['varDocId'];
                 $status=0;
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                 try
+                    {
                 
-                $sql = "UPDATE tbl_accounts set collegename=:UcollegeName,firstname=:firstname,lastname=:lastname,username=:username,password=:password,orgtype=:orgtype,accountType=:UaccountType WHERE id=:id";
+                  $sql = "UPDATE tbl_accounts set collegename=:UcollegeName,firstname=:firstname,lastname=:lastname,username=:username,password=:password,orgtype=:orgtype,accountType=:UaccountType WHERE id=:id";
 
-                $query = $dbh->prepare($sql);
-                $query -> bindParam(':id',$id, PDO::PARAM_STR);
-                $query -> bindParam(':UcollegeName',$UcollegeName, PDO::PARAM_STR);
-                $query -> bindParam(':firstname',$firstName, PDO::PARAM_STR);
-                $query -> bindParam(':lastname',$lastname, PDO::PARAM_STR);
-                $query -> bindParam(':username',$username, PDO::PARAM_STR);
-                $query -> bindParam(':password',$password, PDO::PARAM_STR);
-                $query -> bindParam(':orgtype',$uorgType, PDO::PARAM_STR);
-                $query -> bindParam(':UaccountType',$UaccountType, PDO::PARAM_STR);
-                $query -> execute();
-                $lastInsertId = $dbh->lastInsertId();    
+                    $query = $dbh->prepare($sql);
+                    $query -> bindParam(':id',$id, PDO::PARAM_STR);
+                    $query -> bindParam(':UcollegeName',$UcollegeName, PDO::PARAM_STR);
+                    $query -> bindParam(':firstname',$firstName, PDO::PARAM_STR);
+                    $query -> bindParam(':lastname',$lastname, PDO::PARAM_STR);
+                    $query -> bindParam(':username',$username, PDO::PARAM_STR);
+                    $query -> bindParam(':password',$hash, PDO::PARAM_STR);
+                    $query -> bindParam(':orgtype',$uorgType, PDO::PARAM_STR);
+                    $query -> bindParam(':UaccountType',$UaccountType, PDO::PARAM_STR);
+                    $query -> execute();
+                     $btnSuccess = 1;
 
-                header('Location: adminAccount.php');
+                    }
+                    catch(Exception $e)
+                    {
+                          $btnSuccess = 0;
+                    }
         }
+
+
+
+     
 
      }
 
@@ -184,9 +202,10 @@ if(strlen($_SESSION['adminSession'])==0)
     </section>
 
     <section class="content">
+
         <div class="container-fluid">
-                     <!-- Basic Examples -->
         <form method="POST" > 
+            <input type="hidden" id="btnSuccess" name="btnSuccess" value="<?php echo $btnSuccess; ?>">
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
@@ -349,8 +368,8 @@ if(strlen($_SESSION['adminSession'])==0)
                                   <div class="col-sm-6">
                                      <label>Organizational Type</label>
                                     <select class="form-control show-tick" name="orgType"  id="orgType" >
-                                           <option value="Mandated" >Mandated</option>
-                                        <option value="Accredited">Accredited</option>
+                                            <option value="ACTS" selected>ACTS</option>
+                                            <option value="NSO">NSO</option>
                                     </select>
                                 </div>
                                   <div class="col-sm-6">
@@ -359,7 +378,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                              <option value="Secretary" >Secretary</option>
                                              <option value="Dean">Dean</option>
                                              <option value="Adviser">Adviser</option>
-                                             <option value="Governor">Governor</option>
+                                             <option value="President">President</option>
                                     </select>
                                 </div>
                               </div>
@@ -436,8 +455,8 @@ if(strlen($_SESSION['adminSession'])==0)
                                <div class="col-sm-6">
                                      <label>Organizational Type</label>
                                     <select class="form-control show-tick" name="uorgType" id="uorgType" >
-                                        <option value="Mandated" selected>Mandated</option>
-                                        <option value="Accredited">Accredited</option>
+                                            <option value="ACTS" selected>ACTS</option>
+                                            <option value="NSO">NSO</option>
                                     </select>
                                 </div>
                               <div class="col-sm-6">
@@ -446,7 +465,7 @@ if(strlen($_SESSION['adminSession'])==0)
                                                 <option value="Secretary">Secretary</option>
                                                 <option value="Dean">Dean</option>
                                                 <option value="Adviser">Adviser</option>
-                                                <option value="Governor">Governor</option>
+                                                <option value="President">President</option>
                                     </select>
                                 </div>
                             </div>
@@ -475,7 +494,7 @@ if(strlen($_SESSION['adminSession'])==0)
 
     <!-- Slimscroll Plugin Js -->
     <script src="../../plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
-
+ <script src="../../js/sweetalert2.min.js"></script>
     <!-- Waves Effect Plugin Js -->
     <script src="../../plugins/node-waves/waves.js"></script>
     <script src="../../plugins/jquery-datatable/jquery.dataTables.js"></script>
@@ -510,10 +529,38 @@ if(strlen($_SESSION['adminSession'])==0)
             $('#uorgType').val(orgType);
             $('#UpdateAccount').val(accountType);
 
-            });     
+            });
 
-
-
+             var btn =  $.trim( $('#btnSuccess').val() )
+            if (btn == 1) {
+                  Swal.fire({
+                  position: 'center',
+                  type: 'success',
+                  title: 'Successfully Saved!',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+            }
+            else if (btn == 2)
+            {
+               Swal.fire({
+                  position: 'center',
+                  type: 'success',
+                  title: 'Successfully Deactivated!',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+            } 
+           else if (btn == 3)
+            {
+               Swal.fire({
+                  position: 'center',
+                  type: 'success',
+                  title: 'Successfully Activate!',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+            } 
     });     
 
 
